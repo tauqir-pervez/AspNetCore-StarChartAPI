@@ -1,12 +1,14 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 
 using StarChart.Data;
+using StarChart.Models;
 
 namespace StarChart.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("")]
     [ApiController]
     public class CelestialObjectController : ControllerBase
     {
@@ -14,10 +16,11 @@ namespace StarChart.Controllers
 
         public CelestialObjectController(ApplicationDbContext context)
         {
+            Debugger.Break();
             _context = context;
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetById")]
         public IActionResult GetById(int id)
         {
             var celestialObject = _context.CelestialObjects.FirstOrDefault(c => c.Id == id);
@@ -59,6 +62,14 @@ namespace StarChart.Controllers
                 celestialObject.Satellites = satellites;
             }
             return Ok(celestialObjects);
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody]CelestialObject celestialObject)
+        {
+            _context.CelestialObjects.Add(celestialObject);
+            _context.SaveChanges();
+            return CreatedAtRoute("GetById", routeValues: new { id = celestialObject.Id }, value: celestialObject);
         }
     }
 }

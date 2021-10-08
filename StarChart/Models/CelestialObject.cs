@@ -7,6 +7,7 @@ namespace StarChart.Models
 {
     public class CelestialObject
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
